@@ -1,40 +1,41 @@
 import request from '@/utils/request'
-import { useUserStore } from '@/stores'
-export function getAnalysis(formData){
-    
+import {useUserStore} from '@/stores'
+
+export function getAnalysis(formData) {
+
     console.log(formData);
     for (let [key, value] of formData.entries()) {
         console.log(key, value)
-      }
-    const res=request.post('/file/upload',
+    }
+    const res = request.post('/file/upload',
         formData
-    ,{
-        headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-   
-    
-    })
-   
-    
+        , {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+
+
+        })
+
+
     return res
 }
 
-export const getAnalysislist=(data)=>{
-    const userStore=useUserStore()
-    const res=request.get('/file',{
-        params:{
-            id:userStore.user.id,
-            pageNum:data.pageNum,
-            pageSize:data.pageSize,
+export const getAnalysislist = (data) => {
+    const userStore = useUserStore()
+    const res = request.get('/file', {
+        params: {
+            id: userStore.user.id,
+            pageNum: data.pageNum,
+            pageSize: data.pageSize,
         }
     })
     return res;
 }
 
-export const delAnalysis=(id)=>{
-    const res=request.delete('/file',{
-        params:{
+export const delAnalysis = (id) => {
+    const res = request.delete('/file', {
+        params: {
             id
         }
     })

@@ -8,7 +8,7 @@ import githubTheme from '@kangc/v-md-editor/lib/theme/github.js'
 import hljs from 'highlight.js'
 import Prism from 'prismjs'
 
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import pinia from './stores/index.js'
@@ -16,7 +16,12 @@ import pinia from './stores/index.js'
 VMdPreview.use(githubTheme, {
     Hljs: hljs,  // 必须传递 highlight.js 实例
     Prism: Prism // 部分主题需要 prismjs
-  })
+})
+
+window.addEventListener('load', () => {
+    const [entry] = performance.getEntriesByType('navigation');
+    console.log('首屏时间:', entry.domContentLoadedEventEnd - entry.startTime);
+});
 const app = createApp(App)
 app.use(VMdPreview)
 app.use(pinia)

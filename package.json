@@ -13,25 +13,40 @@
     "@kangc/v-md-editor": "^2.3.18",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.8.2",
+    "cors": "^2.8.5",
     "docx": "^9.3.0",
     "dompurify": "^3.2.5",
     "element-plus": "^2.9.7",
+    "express": "^5.1.0",
     "file-saver": "^2.0.5",
+    "fs-extra": "^11.3.2",
     "highlight.js": "^11.11.1",
+    "html-docx-js": "^0.3.1",
     "mammoth": "^1.9.0",
     "marked": "^15.0.8",
+    "multer": "^2.0.2",
     "pinia": "^3.0.1",
     "quill": "^2.0.3",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vue3-virtual-scroller": "^0.2.3"
   },
   "devDependencies": {
+    "@types/node": "^25.3.5",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vuedx/typescript-plugin-vue": "^0.7.6",
     "pinia-plugin-persistedstate": "^4.2.0",
     "sass": "^1.86.0",
+    "typescript": "^5.9.3",
     "unplugin-auto-import": "^19.1.2",
     "unplugin-vue-components": "^28.4.1",
     "vite": "^6.2.1",
-    "vite-plugin-vue-devtools": "^7.7.2"
-  }
+    "vite-plugin-vue-devtools": "^7.7.2",
+    "vue-tsc": "^3.2.5"
+  },
+  "description": "This template should help get you started developing with Vue 3 in Vite.",
+  "main": "vite.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

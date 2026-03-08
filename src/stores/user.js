@@ -1,31 +1,32 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-export const useUserStore=defineStore(
+import {defineStore} from 'pinia'
+import {ref} from 'vue'
+
+export const useUserStore = defineStore(
     'ai-user',
-    ()=>{
-        const token=ref('')
-        const sessionId=ref('')
-        const user=ref({})
-        const setUser=(data)=>{
-            user.value=data
+    () => {
+        const token = ref('')
+        const sessionId = ref('')
+        const user = ref({})
+        const setUser = (data) => {
+            user.value = data
         }
-        const getUser=()=>{
-            return user.value 
+        const getUser = () => {
+            return user.value
         }
-        const clearUser=()=>{
-            user.value={} 
+        const clearUser = () => {
+            user.value = {}
         }
-        const getSessionId=()=>{
-            return sessionId.value 
+        const getSessionId = () => {
+            return sessionId.value
         }
-        const setSessionId=(data)=>{
-            sessionId.value=data 
+        const setSessionId = (data) => {
+            sessionId.value = data
         }
-        const getToken=()=>{
-            return token.value 
+        const getToken = () => {
+            return token.value
         }
-        const setToken=(data)=>{
-            token.value=data 
+        const setToken = (data) => {
+            token.value = data
         }
         return {
             token,
@@ -40,7 +41,7 @@ export const useUserStore=defineStore(
             getToken
         }
 
-    },{
-        persist:true
+    }, {
+        persist: true
     }
 )
