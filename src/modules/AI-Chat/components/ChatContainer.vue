@@ -10,7 +10,7 @@ import { useChatStore } from "../store/chatStore"
 const chatStore = useChatStore()
 
 function handleSend(text: string) {
-  console.log("父组件收到:", text) // 👈 加这个
+  console.log("父组件收到:", text) // 
 
   chatStore.sendMessage(text)
 }

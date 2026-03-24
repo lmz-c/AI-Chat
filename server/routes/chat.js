@@ -83,7 +83,8 @@ router.get("/chat-stream", async (req, res) => {
         "UPDATE conversations SET title = ? WHERE id = ?",
         [title, conversationId]
       )
-      
+      // 后端主动把标题推送给前端
+      res.write(`event: title\ndata: ${title}\n\n`)
     }
 
     // 👉 2. 调AI

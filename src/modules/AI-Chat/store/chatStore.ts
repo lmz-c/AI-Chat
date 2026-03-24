@@ -2,18 +2,20 @@ import { defineStore } from "pinia"
 import { startStream } from "../api/chatApi"
 import type { Message } from "../types/message"
 import { useConversationStore } from "./conversationStore"
+import { log } from "console"
 
 export const useChatStore = defineStore("chat", () => {
 
   const conversationStore = useConversationStore()
 
-  function sendMessage(text: string) {
-    console.log("发送消息:", text)
+  async function sendMessage(text: string) {
+    console.log("sendMessage调用，发送消息:", text)
 
     if (!text.trim()) return
 
     if (!conversationStore.currentConversation) {
-      conversationStore.createConversation()
+      // 不加的话，执行到下一步，conversationId会是undefined，导致请求失败，直接return
+      await conversationStore.createConversation()
     }
 
     const conversationId = conversationStore.currentConversation?.id
@@ -22,7 +24,7 @@ export const useChatStore = defineStore("chat", () => {
     const current = conversationStore.currentConversation
     if (!current) return
 
-    // ✅ 用户消息
+    // 用户消息
     const userMessage: Message = {
       id: Date.now() + "-user",
       role: "user",
@@ -31,7 +33,7 @@ export const useChatStore = defineStore("chat", () => {
 
     current.messages.push(userMessage)
 
-    // ✅ AI消息（占位）
+    // AI消息（占位）
     const assistantMessage: Message = {
       id: Date.now() + "-assistant",
       role: "assistant",
@@ -44,7 +46,10 @@ export const useChatStore = defineStore("chat", () => {
     let tokenBuffer = ""
     let timer: number | null = null
 
-    startStream(text, conversationId, async (token) => {
+    startStream(
+      text, 
+      conversationId, 
+      async (token) => {
 
       if (token === "[DONE]") {
 
@@ -64,9 +69,15 @@ export const useChatStore = defineStore("chat", () => {
         timer = window.setInterval(flush, 50)
       }
 
-    })
+    }),
+      (title) => {
+        if (conversationStore.currentConversation) {
+          conversationStore.currentConversation.title = title
+          conversationStore.forceUpdate()
+        }
+      }
 
-    // 🔥 关键：强制触发响应式更新
+    // 关键：强制触发响应式更新
     function flush() {
 
       if (!tokenBuffer) return
