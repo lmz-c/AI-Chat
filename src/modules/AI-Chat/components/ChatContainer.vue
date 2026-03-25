@@ -18,7 +18,7 @@ const conversationStore = useConversationStore()
 
 // 初始化一个会话（防止空）
 onMounted(() => {
-  if (!conversationStore.currentConversationId) {
+  if (conversationStore.currentConversationId) {
     conversationStore.createConversation()
   }
 })

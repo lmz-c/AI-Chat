@@ -9,24 +9,24 @@ onMounted(async () => {
 
   await conversationStore.loadConversations()
 
-  if (conversationStore.conversations.length > 0) {
-
-    //选中第一个
-    const first = conversationStore.conversations[0]
-
-    await conversationStore.switchConversation(first.id)
-
-  } else {
-
-    //没有才创建
-    await conversationStore.createConversation()
-
-    }
-    const savedId = localStorage.getItem("currentConversationId")
+  const savedId = localStorage.getItem("currentConversationId")
 
     if (savedId) {
+
       await conversationStore.switchConversation(savedId)
-    }
+
+    } else if (conversationStore.conversations.length > 0) {
+
+      const first = conversationStore.conversations[0]
+      await conversationStore.switchConversation(first.id)
+
+    } 
+    // else {
+
+    // //没有才创建
+    // await conversationStore.createConversation()
+
+    // }
 
 })
 

@@ -13,7 +13,7 @@ export const useChatStore = defineStore("chat", () => {
 
     if (!text.trim()) return
 
-    if (!conversationStore.currentConversation) {
+    if (!conversationStore.currentConversation && conversationStore.isReady) {
       // 不加的话，执行到下一步，conversationId会是undefined，导致请求失败，直接return
       await conversationStore.createConversation()
     }

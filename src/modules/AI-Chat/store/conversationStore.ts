@@ -9,6 +9,7 @@ export const useConversationStore = defineStore("conversation", () => {
   const conversations = ref<Conversation[]>([])
 
   const currentConversationId = ref<string | null>(null)
+  const isReady = ref(false)
 
   const currentConversation = computed(() => {
     return conversations.value.find(
@@ -55,9 +56,9 @@ export const useConversationStore = defineStore("conversation", () => {
   function forceUpdate() {
   conversations.value = [...conversations.value]
 }
-
   async function loadConversations() {
   conversations.value = await getConversations()
+  isReady.value = true
 }
 
   return {
@@ -65,6 +66,7 @@ export const useConversationStore = defineStore("conversation", () => {
     currentConversationId,
     currentConversation,
     messages,
+    isReady,
     createConversation,
     switchConversation,
     addMessage,
