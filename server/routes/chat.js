@@ -52,7 +52,7 @@ router.get("/chat-stream", async (req, res) => {
   res.setHeader("Cache-Control", "no-cache")
   res.setHeader("Connection", "keep-alive")
 
-
+  res.flushHeaders()
 
   try {
     // 👉 1. 存用户消息  
@@ -87,7 +87,7 @@ router.get("/chat-stream", async (req, res) => {
       res.write(`event: title\ndata: ${title}\n\n`)
     }
 
-    // 👉 2. 调AI
+    // 2. 调AI
     const completion = await client.chat.completions.create({
       model: "deepseek-chat",
       messages, 
@@ -96,7 +96,7 @@ router.get("/chat-stream", async (req, res) => {
 
     let fullAnswer = "";
 
-    // 👉 3. 流式返回 + 拼接
+    // 3. 流式返回 + 拼接
     for await (const chunk of completion) {
       const token = chunk.choices[0]?.delta?.content;
 
@@ -107,7 +107,7 @@ router.get("/chat-stream", async (req, res) => {
       }
     }
 
-    // 👉 4. 存AI回复
+    // 4. 存AI回复
     await pool.query(
       "INSERT INTO messages (id, conversation_id, role, content) VALUES (?, ?, ?, ?)",
       [Date.now() + "-assistant", conversationId, "assistant", fullAnswer]

@@ -17,6 +17,8 @@ export function startStream(
     console.log("SSE message:", data)
 
     if (data === "[DONE]") {
+      // 先进入chatstore的onToken回调，再关闭SSE连接,及时刷新UI，不然会直接关闭连接，UI不会刷新
+      onToken("[DONE]")
       es.close()
       return
     }

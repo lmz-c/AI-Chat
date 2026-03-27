@@ -37,7 +37,8 @@ export const useChatStore = defineStore("chat", () => {
     const assistantMessage: Message = {
       id: Date.now() + "-assistant",
       role: "assistant",
-      content: ""
+      content: "",
+      done: false
     }
 
     current.messages.push(assistantMessage)
@@ -51,15 +52,29 @@ export const useChatStore = defineStore("chat", () => {
       conversationId, 
       async (token) => {
 
-      if (token === "[DONE]") {
-
+      if (token.trim() === "[DONE]") {
         if (timer) {
           clearInterval(timer)
           timer = null
         }
-
         flush()
+        assistantMessage.done = true
+        const beforeReloadLen = conversationStore.messages.length
         await conversationStore.loadConversations()
+        const afterLoadLen = conversationStore.messages.length
+        // 关键：loadConversations() 只返回会话列表，不返回 messages
+        // 不先 switchConversation 拉取消息，UI 会先变空白，直到用户手动切换会话。
+        await conversationStore.switchConversation(conversationId)
+        const afterSwitchLen = conversationStore.messages.length
+        conversationStore.forceUpdate() // 强制更新，确保UI刷新
+        
+        console.log("DONE reload lens", {
+          conversationId,
+          beforeReloadLen,
+          afterLoadLen,
+          afterSwitchLen,
+        })
+
         return
       }
 
