@@ -3,6 +3,7 @@ const OpenAI = require("openai")
 const pool = require("../db");
 const router = express.Router()
 const { buildPrompt } = require("../utils/promptBuilder")
+const { trimMessages } = require("../utils/contextTrimmer")
 
 
 const client = new OpenAI({
@@ -55,21 +56,22 @@ router.get("/chat-stream", async (req, res) => {
   res.flushHeaders()
 
   try {
-    // 👉 1. 存用户消息  
+    //存用户消息  
     await pool.query(
       "INSERT INTO messages (id, conversation_id, role, content) VALUES (?, ?, ?, ?)",
       [Date.now() + "-user", conversationId, "user", message]
     );
 
-    // 👉 2️⃣ 查历史对话
+    //查历史对话
     const history = await getHistoryMessages(conversationId)
 
-    // 👉 3️⃣ 构建 Prompt
-    const messages = buildPrompt({
+    //裁剪上下文，构建 Prompt
+    const rawMessages = buildPrompt({
       message,
       history,
       context: null
     })
+    const messages = trimMessages(rawMessages,3000)
 
     const [rows] = await pool.query(
       "SELECT COUNT(*) as count FROM messages WHERE conversation_id = ?",
