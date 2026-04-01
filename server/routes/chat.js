@@ -4,6 +4,7 @@ const pool = require("../db");
 const router = express.Router()
 const { buildPrompt } = require("../utils/promptBuilder")
 const { trimMessages } = require("../utils/contextTrimmer")
+const { retrieveRagContext } = require("../utils/vectorSearch")
 
 
 const client = new OpenAI({
@@ -65,11 +66,19 @@ router.get("/chat-stream", async (req, res) => {
     //查历史对话
     const history = await getHistoryMessages(conversationId)
 
+    // RAG：向量检索资料（失败则不带 context，不影响聊天）
+    let ragContext = null
+    try {
+      ragContext = await retrieveRagContext(pool, message, { topK: 3 })
+    } catch (e) {
+      console.error("[RAG] retrieveRagContext:", e.message) 
+    }
+
     //裁剪上下文，构建 Prompt
     const rawMessages = buildPrompt({
       message,
       history,
-      context: null
+      context: ragContext
     })
     const messages = trimMessages(rawMessages,3000)
 
