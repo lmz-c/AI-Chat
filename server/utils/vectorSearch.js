@@ -40,6 +40,7 @@ async function retrieveRagContext(pool, userMessage, options = {}) {
     if (!Array.isArray(vec) || vec.length !== queryVec.length) continue
 
     const score = cosineSimilarity(queryVec, vec)
+    // 把相关度和文档内容都保留下来，后续排序和截取 topK
     if (Number.isFinite(score)) {
       scored.push({ content: row.content, score })
     }

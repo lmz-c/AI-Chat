@@ -44,13 +44,14 @@ async function generateTitle(message) {
   return completion.choices[0].message.content
 }
 
-router.get("/chat-stream", async (req, res) => {
-  const message = req.query.message
-  const conversationId = req.query.conversationId;
+router.post("/chat-stream", async (req, res) =>{
+  const message = req.body.message
+  const conversationId = req.body.conversationId;
 
   console.log("conversationId:", conversationId);
-
-  res.setHeader("Content-Type", "text/event-stream")
+// 设置响应头
+  res.setHeader("Content-Type", "text/plain; charset=utf-8")
+  res.setHeader("Transfer-Encoding", "chunked")
   res.setHeader("Cache-Control", "no-cache")
   res.setHeader("Connection", "keep-alive")
 

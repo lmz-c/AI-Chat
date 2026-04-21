@@ -1,44 +1,70 @@
-export function startStream(
-  message: string, 
-  conversationId: string, 
+export async function startStream(
+  message: string,
+  conversationId: string,
   onToken: (token: string) => void,
-  onTitle?: (title: string) => void 
+  onTitle?: (title: string) => void
 ) {
-  console.log("Starting stream调用")
-  const es = new EventSource(
-    `http://localhost:3000/chat-stream?message=${message}&conversationId=${conversationId}`
-  )
+  console.log("fetch stream start")
 
-  
-  // 默认消息（token流）
-  es.addEventListener("message", (event) => {
-    const data = event.data
-
-    console.log("SSE message:", data)
-
-    if (data === "[DONE]") {
-      // 先进入chatstore的onToken回调，再关闭SSE连接,及时刷新UI，不然会直接关闭连接，UI不会刷新
-      onToken("[DONE]")
-      es.close()
-      return
-    }
-
-    onToken(data)
+  const res = await fetch("http://localhost:3000/chat-stream", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message,
+      conversationId
+    })
   })
 
-  // 新增：标题事件
-  es.addEventListener("title", (event) => {
-    const title = event.data
-    console.log("SSE title:", title)
+  const reader = res.body?.getReader()
+  const decoder = new TextDecoder("utf-8")
 
-    if (onTitle) {
-      onTitle(title)
+  if (!reader) return
+
+  let buffer = "" // 用来拼接半包数据
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+
+    buffer += decoder.decode(value, { stream: true })
+
+    //按 SSE 格式拆分（\n\n）
+    const parts = buffer.split("\n\n")
+
+    // 最后一段可能不完整，留着
+    buffer = parts.pop() || ""
+
+    for (const part of parts) {
+
+      // 解析 event
+      let event = "message"
+      let data = ""
+
+      const lines = part.split("\n")
+
+      for (const line of lines) {
+        if (line.startsWith("event:")) {
+          event = line.replace("event:", "").trim()
+        }
+        if (line.startsWith("data:")) {
+          data += line.replace("data:", "").trim()
+        }
+      }
+
+      //分发事件
+      if (event === "title") {
+        console.log("title:", data)
+        onTitle && onTitle(data)
+      } else {
+        if (data === "[DONE]") {
+          onToken("[DONE]")
+          return
+        }
+
+        onToken(data)
+      }
     }
-  })
-
-  //  错误处理
-  es.onerror = (err) => {
-    console.error("SSE error:", err)
-    es.close()
   }
-}
+} 
