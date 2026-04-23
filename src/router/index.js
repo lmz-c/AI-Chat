@@ -54,7 +54,7 @@ const routes = [
             }
         ]
 
-    }, {
+    } , {
         path: '/welcome',
         name: 'welcome',
         component: () => import('../views/welcome/welcome.vue')
@@ -86,6 +86,10 @@ const routes = [
     },{
         path: '/Blob',
         component: () => import('../views/ai备课/Blob.vue')
+
+    },{
+        path: '/AIChat',
+        component: () => import('../modules/AI-Chat/pages/ChatPage.vue')
 
     }
 

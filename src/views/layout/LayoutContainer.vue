@@ -13,7 +13,7 @@
           <el-icon><Tickets /></el-icon>
           <span>智能备课</span>
         </el-menu-item>
-        <el-menu-item index="/create/ppt">
+        <el-menu-item index="/AIChat">
           <el-icon><Crop /></el-icon>
           <span>智能助手</span>
         </el-menu-item>

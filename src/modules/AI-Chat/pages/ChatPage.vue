@@ -2,6 +2,7 @@
 
 import ChatContainer from "../components/ChatContainer.vue"
 
+
 </script>
 
 <template>
@@ -13,3 +14,11 @@ import ChatContainer from "../components/ChatContainer.vue"
 </div>
 
 </template>
+
+<style>
+
+.chat-page {
+  height: 100vh;
+}
+
+</style>
